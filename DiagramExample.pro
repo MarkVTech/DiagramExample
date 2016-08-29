@@ -20,13 +20,15 @@ SOURCES += main.cpp\
     shims.cpp \
     rectangleshape.cpp \
     shapebase.cpp \
-    edge.cpp
+    edge.cpp \
+    polygonshape.cpp
 
 HEADERS  += mainwindow.h \
     drawingscene.h \
     shims.h \
     rectangleshape.h \
     shapebase.h \
-    edge.h
+    edge.h \
+    polygonshape.h
 
 FORMS    += mainwindow.ui

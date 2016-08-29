@@ -29,6 +29,7 @@
 #include "drawingscene.h"
 #include "ui_mainwindow.h"
 #include "rectangleshape.h"
+#include "polygonshape.h"
 #include "shims.h"
 #include "shapebase.h"
 #include "edge.h"
@@ -79,6 +80,14 @@ MainWindow::MainWindow(QWidget *parent) :
     mri4->setBrush(mBrush);
     connect(mri4, SIGNAL(shapeMoved()), this, SLOT(handleShapeMoved()));
 
+    QPolygonF triangle;
+    triangle << QPointF(0.0, 0.0) << QPointF(50.0, 0.0) << QPointF(50.0, 50.0);
+    PolygonShape* poly1 = new PolygonShape(triangle, mDrawingScene->router());
+    mDrawingScene->addShape(poly1);
+    poly1->setPen(mPen);
+    poly1->setBrush(mBrush);
+    connect(poly1, SIGNAL(shapeMoved()), this, SLOT(handleShapeMoved()));
+
     Edge* edge1 = new Edge("first", mDrawingScene->router(), mri1, mri2);
     edge1->setPen(QPen(Qt::green));
     mDrawingScene->addEdge(edge1);
@@ -102,6 +111,14 @@ MainWindow::MainWindow(QWidget *parent) :
     Edge* edge6 = new Edge("sixth", mDrawingScene->router(), mri3, mri4);
     edge6->setPen(QPen(Qt::magenta));
     mDrawingScene->addEdge(edge6);
+
+    Edge* edge7 = new Edge("seventh", mDrawingScene->router(), mri3, poly1);
+    edge7->setPen(QPen(QColor("pink")));
+    mDrawingScene->addEdge(edge7);
+
+    Edge* edge8 = new Edge("eigth", mDrawingScene->router(), mri4, poly1);
+    edge8->setPen(QPen(QColor("orange")));
+    mDrawingScene->addEdge(edge8);
 
 }
 

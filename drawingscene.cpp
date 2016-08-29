@@ -113,6 +113,8 @@ void DrawingScene::makeRouter_p()
     mRouter = new Avoid::Router(Avoid::PolyLineRouting);
     mRouter->setRoutingParameter(Avoid::shapeBufferDistance, 10.0);
     mRouter->setRoutingParameter(Avoid::idealNudgingDistance, 10.0);
+    //mRouter->setRoutingOption(Avoid::nudgeOrthogonalSegmentsConnectedToShapes, true);
+    //mRouter->setRoutingOption(Avoid::nudgeOrthogonalTouchingColinearSegments, true);
 }
 
 
