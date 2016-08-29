@@ -24,6 +24,7 @@
 #include <QDebug>
 #include <QPainterPath>
 #include <QGraphicsPathItem>
+#include <QTransform>
 
 #include "mainwindow.h"
 #include "drawingscene.h"
@@ -81,12 +82,27 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(mri4, SIGNAL(shapeMoved()), this, SLOT(handleShapeMoved()));
 
     QPolygonF triangle;
-    triangle << QPointF(0.0, 0.0) << QPointF(50.0, 0.0) << QPointF(50.0, 50.0);
+    triangle << QPointF(0.0, 0.0) << QPointF(50.0, 0.0) << QPointF(25.0, 25.0);
     PolygonShape* poly1 = new PolygonShape(triangle, mDrawingScene->router());
     mDrawingScene->addShape(poly1);
+    poly1->setPos(100, 50);
     poly1->setPen(mPen);
     poly1->setBrush(mBrush);
     connect(poly1, SIGNAL(shapeMoved()), this, SLOT(handleShapeMoved()));
+
+    QPainterPath qpp;
+    qpp.addEllipse(QRectF(0,0, 100, 50));
+    QList<QPolygonF> list = qpp.toSubpathPolygons(QTransform());
+    QPolygonF ellipse;
+    for ( int idx=0; idx<list.size(); ++idx )
+    {
+        ellipse << list.at(idx);
+    }
+    PolygonShape* poly2 = new PolygonShape(ellipse, mDrawingScene->router());
+    mDrawingScene->addShape(poly2);
+    poly2->setPen(mPen);
+    poly2->setBrush(mBrush);
+    connect(poly2, SIGNAL(shapeMoved()), this, SLOT(handleShapeMoved()));
 
     Edge* edge1 = new Edge("first", mDrawingScene->router(), mri1, mri2);
     edge1->setPen(QPen(Qt::green));
@@ -120,6 +136,9 @@ MainWindow::MainWindow(QWidget *parent) :
     edge8->setPen(QPen(QColor("orange")));
     mDrawingScene->addEdge(edge8);
 
+    Edge* edge9 = new Edge("eigth", mDrawingScene->router(), poly1, poly2);
+    edge9->setPen(QPen(QColor("white")));
+    mDrawingScene->addEdge(edge9);
 }
 
 MainWindow::~MainWindow()
