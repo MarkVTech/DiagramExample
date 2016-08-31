@@ -17,6 +17,7 @@
 */
 
 #include <QGraphicsRectItem>
+#include <QGraphicsEllipseItem>
 #include <QGraphicsScene>
 #include <QColor>
 #include <QBrush>
@@ -48,7 +49,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->changePenButton->setVisible(false);
 
     ui->graphicsView->setBackgroundBrush(QBrush(QColor("black")));
-    mDrawingScene = new DrawingScene(0, 0, 400, 400, this);
+    mDrawingScene = new DrawingScene(0, 0, 640, 480, this);
     ui->graphicsView->setScene(mDrawingScene);
     ui->graphicsView->setRenderHint(QPainter::Antialiasing);
     //ui->graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
@@ -90,9 +91,9 @@ MainWindow::MainWindow(QWidget *parent) :
     poly1->setBrush(mBrush);
     connect(poly1, SIGNAL(shapeMoved()), this, SLOT(handleShapeMoved()));
 
-    QPainterPath qpp;
-    qpp.addEllipse(QRectF(0,0, 100, 50));
-    QList<QPolygonF> list = qpp.toSubpathPolygons(QTransform());
+    QPainterPath qpp1;
+    qpp1.addEllipse(QRectF(0,0, 100, 50));
+    QList<QPolygonF> list = qpp1.toSubpathPolygons(QTransform());
     QPolygonF ellipse;
     for ( int idx=0; idx<list.size(); ++idx )
     {
@@ -103,6 +104,26 @@ MainWindow::MainWindow(QWidget *parent) :
     poly2->setPen(mPen);
     poly2->setBrush(mBrush);
     connect(poly2, SIGNAL(shapeMoved()), this, SLOT(handleShapeMoved()));
+
+    QPainterPath qpp2;
+    qpp2.moveTo(0,0);
+    qpp2.cubicTo(99, 0, 50, 50, 99, 99);
+    QList<QPolygonF> list2 = qpp2.toSubpathPolygons(QTransform());
+    QPolygonF curved;
+    for ( int idx=0; idx<list2.size(); ++idx )
+    {
+        curved << list2.at(idx);
+    }
+    PolygonShape* poly3 = new PolygonShape(curved, mDrawingScene->router());
+    mDrawingScene->addShape(poly3);
+    poly3->setPen(mPen);
+    poly3->setBrush(mBrush);
+    QPointF thePoint = qpp2.pointAtPercent(0.75);
+    qDebug() << "thePoint is" << thePoint;
+    QGraphicsEllipseItem* qgie = mDrawingScene->addEllipse(QRectF(thePoint, QSize(10, 10)), QPen(Qt::red), QBrush(Qt::green));
+    qgie->setZValue(4);
+    qgie->setParentItem(poly3);
+    connect(poly3, SIGNAL(shapeMoved()), this, SLOT(handleShapeMoved()));
 
     Edge* edge1 = new Edge("first", mDrawingScene->router(), mri1, mri2);
     edge1->setPen(QPen(Qt::green));
